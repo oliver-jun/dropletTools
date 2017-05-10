@@ -3,6 +3,8 @@ Custom Droplet Scripts - Includes new droplet lockdown, LEMP setup, and WordPres
 All tools written for Digital Ocean Ubuntu 16.04LTS x64 droplets
 
 To secure a fresh droplet:
+
+
 ```ssh root@your.droplet.ip.address```
 
 ```cd ~/```
