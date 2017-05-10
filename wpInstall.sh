@@ -42,7 +42,7 @@ do
 done
 
 cd ~/
-mkdir -p $newDomain/logs $newDomain/public
+mkdir -p $newDomain/logs $newDomain/backups $newDomain/config $newDomain/scripts $newDomain/public
 chmod -R 755 $newDomain
 
 sudo cat << EOF >> "$HOME/$newDomain.conf"
@@ -95,10 +95,49 @@ wp core download
 wp core config --dbname=$mysqlDB --dbuser=$mysqlUser --dbpass=$mysqlUserPass
 wp core install --url=http://$newDomain --title='New WordPress Site' --admin_user=$USER --admin_email=admin@$newDomain --admin_password=$newDomainPass
 
+
+echo "-----------------------------------------------------------------"
+echo "----- Setting up System Daemon Cron with Daily Backup"
+echo "-----------------------------------------------------------------"
+
+# Disable WordPress cron and enable System User Cron on 5min job
+sudo sed -i '$a define('\''DISABLE_WP_CRON'\'', true);' $HOME/$newDomain/public/wp-config.php
+
+(crontab -l ; echo "*/5 * * * * cd $HOME/$newDomain/public; php -q wp-cron.php >/dev/null 2>&1")| crontab -
+(crontab -l ; echo "0 5 * * 0 cd $HOME/$newDomain/public; $HOME/$newDomain/scripts/backup.sh")| crontab -
+
+cat << EOF >> "$HOME/$newDomain/scripts/backup.sh"
+#!/bin/bash
+NOW=\$(date +%Y%m%d%H%M%S)
+SQL_FILE=\${NOW}_database.sql
+
+# Backup database
+wp db export \$SQL_FILE --add-drop-table
+
+# Compress the database
+gzip \$SQL_FILE
+
+# Backup uploads directory and database, then cleanup
+tar -zcf ../backups/\${NOW}_uploadsANDdb.tar.gz wp-content/uploads \$SQL_FILE.gz
+rm -f \$SQL_FILE
+rm -f \$SQL_FILE.gz
+
+# Remove backup files more than 7 days old
+rm -f ../backups/\$(date +%Y%m%d* --date='8 days ago').gz
+EOF
+cd ~/$newDomain/scripts/
+chmod u+x backup.sh
+
 echo "------------------------------------------------------------"
 echo "----- WordPress install Complete"
 echo "available at: http://$newDomain/wp-admin"
 echo "username: $USER"
 echo "password: $newDomainPass"
 echo "------------------------------------------------------------"
+
+
+
+
+
+
 
