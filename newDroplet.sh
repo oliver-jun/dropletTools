@@ -19,7 +19,7 @@ dpkg-reconfigure tzdata
 
 # Prompt for username and setup primary user
 echo && read -p "Please enter your primary username:" installUser && echo
-adduser -d /var/www -G www-data $installUser
+adduser -G www-data $installUser
 usermod -a -G sudo $installUser
 
 # Update Server and install ufw + fail2ban
