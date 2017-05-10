@@ -24,7 +24,7 @@ do
     echo && read -p "Please enter a password for the new MySQL user:" mysqlUserPass && echo
     echo && read -p "Please enter your MySQL root password:" mysqlRootPass && echo
 
-    echo "-- New Domain Info"
+    echo "---------- New Domain Info -------------"
     echo "Domain Name: $newDomain" 
     echo "MySQL User: $mysqlUser@localhost" 
     echo "MySQL User password: $mysqlUserPass"
@@ -75,9 +75,7 @@ sudo cp --no-preserve=mode,ownership ~/$newDomain.conf /etc/nginx/sites-availabl
 sudo rm ~/$newDomain.conf
 
 sudo ln -s /etc/nginx/sites-available/$newDomain /etc/nginx/sites-enabled/$newDomain
-
 sudo systemctl restart nginx
-
 
 # Setup Wordpress Database and Users
 cat << EOF >> "$HOME/wp.sql"
@@ -94,7 +92,6 @@ cd ~/$newDomain/public
 wp core download
 wp core config --dbname=$mysqlDB --dbuser=$mysqlUser --dbpass=$mysqlUserPass
 wp core install --url=http://$newDomain --title='New WordPress Site' --admin_user=$USER --admin_email=admin@$newDomain --admin_password=$newDomainPass
-
 
 echo "-----------------------------------------------------------------"
 echo "----- Setting up System Daemon Cron with Daily Backup"
