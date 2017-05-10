@@ -17,3 +17,10 @@ To setup LEMP Server:
 ```ssh primaryUser@your.droplet.ip.address```
 
 ```wget https://raw.githubusercontent.com/itcarsales/dropletTools/master/LEMP.sh ; bash LEMP.sh```
+
+
+To setup WordPress Dropper:
+
+```ssh primaryUser@your.droplet.ip.address```
+
+```wget https://raw.githubusercontent.com/itcarsales/dropletTools/master/wpInstall.sh ; bash wpInstall.sh```
