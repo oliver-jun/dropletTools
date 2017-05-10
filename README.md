@@ -9,6 +9,11 @@ To secure a fresh droplet:
 
 ```cd ~/```
 
-```wget https://raw.githubusercontent.com/itcarsales/dropletTools/master/newDroplet.sh```
+```wget https://raw.githubusercontent.com/itcarsales/dropletTools/master/newDroplet.sh ; bash newDroplet.sh```
 
-```bash newDroplet.sh```
+
+To setup LEMP Server:
+
+```ssh primaryUser@your.droplet.ip.address```
+
+```wget https://raw.githubusercontent.com/itcarsales/dropletTools/master/LEMP.sh ; bash LEMP.sh```
