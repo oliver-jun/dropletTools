@@ -25,3 +25,5 @@ Custom Droplet Scripts - Includes new droplet lockdown, LEMP setup, and WordPres
 ```ssh primaryUser@your.droplet.ip.address```
 
 ```wget https://raw.githubusercontent.com/itcarsales/dropletTools/master/wpInstall.sh ; bash wpInstall.sh```
+
+The WordPress Dropper can be reused to install multiple instances of WordPress on a single server.  Some knowledge of DNS and NGINX configuration may be required for advanced configurations.  A single-core, 512Mb droplet has proven more than sufficient to run a single instance.
