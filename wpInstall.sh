@@ -172,13 +172,13 @@ rm -f \$SQL_FILE.gz
 # Remove backup files more than 7 days old
 rm -f ../backups/\$(date +%Y%m%d* --date='8 days ago').gz
 EOF
+
 cd ~/$newDomain/scripts/
 chmod u+x backup.sh
 
 # Install Redis-Object-Cache
 cd ~/$newDomain/public/wp-content
 wget https://raw.githubusercontent.com/ericmann/Redis-Object-Cache/master/object-cache.php
-
 wp plugin install nginx-cache --activate
 
 echo "------------------------------------------------------------"
