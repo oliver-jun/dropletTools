@@ -30,6 +30,9 @@ sudo add-apt-repository ppa:nginx/development -y
 # Update new repos
 sudo apt-get -y update
 
+# Install LetsEncrypt
+sudo apt-get install letsencrypt -y
+
 # Install NGINX
 sudo apt-get -y install nginx 
 
@@ -101,6 +104,15 @@ http {
 	error_log /var/log/nginx/error.log;
 
 	##
+	# Security
+	##
+
+	add_header Content-Security-Policy "default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval';" always;
+    add_header X-Xss-Protection "1; mode=block" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+
+	##
 	# Gzip Settings
 	##
 
@@ -114,12 +126,22 @@ http {
 	# gzip_http_version 1.1;
 	gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
 
-    ##
-    # Cache Settings
-    ##
+	##
+	# Cache Settings
+	##
 
-    fastcgi_cache_key "\$scheme\$request_method\$host\$request_uri";
-    add_header Fastcgi-Cache \$upstream_cache_status;
+	fastcgi_cache_key "\$scheme\$request_method\$host\$request_uri";
+	add_header Fastcgi-Cache \$upstream_cache_status;
+
+	##
+	# SSL
+	##
+
+	ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_prefer_server_ciphers on;
+	ssl_session_cache shared:SSL:10m;
+	ssl_session_timeout 10m;
+	add_header Strict-Transport-Security "max-age=31536000; includeSubdomains";
 
 	##
 	# Virtual Host Configs
@@ -127,6 +149,10 @@ http {
 
 	include /etc/nginx/conf.d/*.conf;
 	include /etc/nginx/sites-enabled/*;
+
+	##
+	# Catch-all Virtual Host
+	##
 
 	server {
 		listen 80 default_server;

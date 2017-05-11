@@ -47,6 +47,41 @@ update-rc.d fail2ban enable
 service fail2ban start
 
 echo "-----------------------------------------------------------------"
+echo "----- Setup for Unattended Updates, ReStarts, and AutoClean"
+echo "-----------------------------------------------------------------"
+
+apt-get -y install unattended-upgrades
+
+cat <<EOF> "/etc/apt/apt.conf.d/10periodic"
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::AutocleanInterval "7";
+APT::Periodic::Unattended-Upgrade "1";
+EOF
+
+cat << EOF > "/etc/apt/apt.conf.d/50unattended-upgrades"
+// Automatically upgrade packages from these (origin:archive) pairs
+Unattended-Upgrade::Allowed-Origins {
+        "\${distro_id}:\${distro_codename}";
+        "\${distro_id}:\${distro_codename}-security";
+//        "\${distro_id}:\${distro_codename}-updates";
+//        "\${distro_id}:\${distro_codename}-proposed";
+//        "\${distro_id}:\${distro_codename}-backports";
+};
+
+// List of packages to not update (regexp are supported)
+Unattended-Upgrade::Package-Blacklist {
+//      "vim";
+//      "libc6";
+//      "libc6-dev";
+//      "libc6-i686";
+};
+
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-Time "06:00";
+EOF
+
+echo "-----------------------------------------------------------------"
 echo "----- Modify /etc/ssh/sshd_config to remove SHH root access"
 echo "-----------------------------------------------------------------"
 sed -i '/^PermitRootLogin[ \t]\+\w\+$/{ s//PermitRootLogin no/g; }' /etc/ssh/sshd_config

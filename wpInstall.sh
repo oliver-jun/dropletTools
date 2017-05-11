@@ -49,8 +49,11 @@ sudo cat << EOF >> "$HOME/$newDomain.conf"
 fastcgi_cache_path $HOME/$newDomain/cache levels=1:2 keys_zone=$newDomain:100m inactive=60m;
 
 server {
-    listen 80;
-    listen [::]:80;
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    ssl_certificate /etc/letsencrypt/live/$newDomain/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/$newDomain/privkey.pem;
 
     server_name $newDomain www.$newDomain;
 
@@ -80,6 +83,11 @@ server {
         set \$skip_cache 1;
     }
 
+	# Don't cache shopping basket, checkout or account pages
+	if (\$request_uri ~* "/cart/*\$|/checkout/*\$|/my-account/*\$") {
+        	set \$skip_cache 1;
+	}
+
     location / {
         try_files \$uri \$uri/ /index.php?\$args; 
     }
@@ -96,11 +104,23 @@ server {
         fastcgi_cache_valid 60m;
     }
 }
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name $newDomain www.$newDomain;
+
+    return 301 https://\$server_name\$request_uri;
+}
 EOF
 sudo cp --no-preserve=mode,ownership ~/$newDomain.conf /etc/nginx/sites-available/$newDomain
 sudo rm ~/$newDomain.conf
 
 sudo ln -s /etc/nginx/sites-available/$newDomain /etc/nginx/sites-enabled/$newDomain
+sudo systemctl restart nginx
+
+# Setup SSL with LetsEncrypt/CertBot - Request Certificate
+sudo letsencrypt certonly --webroot -w ~/$newDomain/public -d $newDomain -d www.$newDomain
 sudo systemctl restart nginx
 
 # Setup Wordpress Database and Users
@@ -126,8 +146,12 @@ echo "-----------------------------------------------------------------"
 # Disable WordPress cron and enable System User Cron on 5min job
 sudo sed -i '$a define('\''DISABLE_WP_CRON'\'', true);' $HOME/$newDomain/public/wp-config.php
 
+# WordPress Cron on 5min Loop
 (crontab -l ; echo "*/5 * * * * cd $HOME/$newDomain/public; php -q wp-cron.php >/dev/null 2>&1")| crontab -
+# WordPress Daily Backups - 5am
 (crontab -l ; echo "0 5 * * 0 cd $HOME/$newDomain/public; $HOME/$newDomain/scripts/backup.sh")| crontab -
+# LetsEncrypt renewal - twice daily - skips certs not due in next 30days
+(crontab -l ; echo "0 0,12 * * * letsencrypt renew >/dev/null 2>&1")| crontab -
 
 cat << EOF >> "$HOME/$newDomain/scripts/backup.sh"
 #!/bin/bash
@@ -163,9 +187,4 @@ echo "available at: http://$newDomain/wp-admin"
 echo "username: $USER"
 echo "password: $newDomainPass"
 echo "------------------------------------------------------------"
-
-
-
-
-
 
