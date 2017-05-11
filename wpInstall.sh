@@ -46,6 +46,8 @@ mkdir -p $newDomain/logs $newDomain/backups $newDomain/config $newDomain/scripts
 chmod -R 755 $newDomain
 
 sudo cat << EOF >> "$HOME/$newDomain.conf"
+fastcgi_cache_path $HOME/$newDomain/cache levels=1:2 keys_zone=$newDomain:100m inactive=60m;
+
 server {
     listen 80;
     listen [::]:80;
@@ -58,6 +60,26 @@ server {
     root $HOME/$newDomain/public/;
     index index.php;
 
+    set \$skip_cache 0;
+
+    # POST requests and urls with a query string should always go to PHP
+    if (\$request_method = POST) {
+        set \$skip_cache 1;
+    }   
+    if (\$query_string != "") {
+        set \$skip_cache 1;
+    }   
+
+    # Don’t cache uris containing the following segments
+    if (\$request_uri ~* "/wp-admin/|/xmlrpc.php|wp-.*.php|/feed/|index.php|sitemap(_index)?.xml") {
+        set \$skip_cache 1;
+    }   
+
+    # Don’t use the cache for logged in users or recent commenters
+    if (\$http_cookie ~* "comment_author|wordpress_[a-f0-9]+|wp-postpass|wordpress_no_cache|wordpress_logged_in") {
+        set \$skip_cache 1;
+    }
+
     location / {
         try_files \$uri \$uri/ /index.php?\$args; 
     }
@@ -68,6 +90,10 @@ server {
         fastcgi_pass unix:/run/php/php7.1-fpm.sock;
         fastcgi_index index.php;
         include fastcgi_params;
+        fastcgi_cache_bypass \$skip_cache;
+        fastcgi_no_cache \$skip_cache;
+        fastcgi_cache $newDomain;
+        fastcgi_cache_valid 60m;
     }
 }
 EOF
@@ -125,13 +151,18 @@ EOF
 cd ~/$newDomain/scripts/
 chmod u+x backup.sh
 
+# Install Redis-Object-Cache
+cd ~/$newDomain/public/wp-content
+wget https://raw.githubusercontent.com/ericmann/Redis-Object-Cache/master/object-cache.php
+
+wp plugin install nginx-cache --activate
+
 echo "------------------------------------------------------------"
 echo "----- WordPress install Complete"
 echo "available at: http://$newDomain/wp-admin"
 echo "username: $USER"
 echo "password: $newDomainPass"
 echo "------------------------------------------------------------"
-
 
 
 

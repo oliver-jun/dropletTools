@@ -114,6 +114,13 @@ http {
 	# gzip_http_version 1.1;
 	gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
 
+    ##
+    # Cache Settings
+    ##
+
+    fastcgi_cache_key "\$scheme\$request_method\$host\$request_uri";
+    add_header Fastcgi-Cache \$upstream_cache_status;
+
 	##
 	# Virtual Host Configs
 	##
@@ -147,8 +154,13 @@ sudo sed -i '/upload_max_filesize =/c\upload_max_filesize = 64M' /etc/php/7.1/fp
 # Enable Fast CGI
 sudo sed -i '$a fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;' /etc/nginx/fastcgi_params
 
-#ReStart NGINX and PHP
+# Install and Configure Redis Caching
+sudo apt-get -y install redis-server php-redis
+sudo sed -i '/# maxmemory <bytes>/c\maxmemory 64mb' /etc/redis/redis.conf
+
+#ReStarts
 sudo systemctl restart nginx
+sudo service redis-server restart
 sudo service php7.1-fpm restart
 
 # Setup WordPress CLI and set to executable
