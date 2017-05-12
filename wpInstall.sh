@@ -7,6 +7,7 @@ if [ "$(id -u)" == "0" ]; then
     echo "ERROR: INVALID PERMISSIONS (Please do not use the sudo command)"
 	exit 1
 fi
+cd ~/
 
 echo "------------------------------------------------------------"
 echo "               Welcome to the WordPress Dropper"
@@ -208,6 +209,9 @@ chmod u+x backup.sh
 cd ~/$newDomain/public/wp-content
 wget https://raw.githubusercontent.com/ericmann/Redis-Object-Cache/master/object-cache.php
 wp plugin install nginx-cache --activate
+
+# Cleanup and move original files to .backups
+mv ~/*.old ~/.backups
 
 echo "------------------------------------------------------------"
 echo "----- WordPress install Complete"
