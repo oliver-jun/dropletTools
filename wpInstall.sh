@@ -45,7 +45,40 @@ cd ~/
 mkdir -p $newDomain/logs $newDomain/backups $newDomain/config $newDomain/scripts $newDomain/public
 chmod -R 755 $newDomain
 
-sudo cat << EOF >> "$HOME/$newDomain.conf"
+# Setup Basic Block to establish LetsEncrypt, then replace with actual block
+sudo cat << EOF > "$HOME/$newDomain.conf"
+server {
+    listen 80;
+    listen [::]:80;
+    server_name $newDomain www.$newDomain;
+
+    access_log $HOME/$newDomain/logs/access.log;
+    error_log $HOME/$newDomain/logs/error.log;
+
+    root $HOME/$newDomain/public/;
+    index index.php;
+
+    location / {
+        try_files \$uri \$uri/ /index.php?\$args; 
+    }
+
+    location ~ \.php$ {
+        try_files \$uri =404;
+
+    }
+}
+EOF
+sudo cp --no-preserve=mode,ownership ~/$newDomain.conf /etc/nginx/sites-available/$newDomain
+sudo rm ~/$newDomain.conf
+sudo ln -s /etc/nginx/sites-available/$newDomain /etc/nginx/sites-enabled/$newDomain
+sudo systemctl restart nginx
+
+# Setup SSL with LetsEncrypt/CertBot - Request Certificate
+sudo letsencrypt certonly --webroot -w ~/$newDomain/public -d $newDomain -d www.$newDomain
+sudo systemctl restart nginx
+ 
+# Setup Actual Server Block with SSL
+sudo cat << EOF > "$HOME/$newDomain.conf"
 fastcgi_cache_path $HOME/$newDomain/cache levels=1:2 keys_zone=$newDomain:100m inactive=60m;
 
 server {
@@ -115,16 +148,11 @@ server {
 EOF
 sudo cp --no-preserve=mode,ownership ~/$newDomain.conf /etc/nginx/sites-available/$newDomain
 sudo rm ~/$newDomain.conf
-
 sudo ln -s /etc/nginx/sites-available/$newDomain /etc/nginx/sites-enabled/$newDomain
 sudo systemctl restart nginx
 
-# Setup SSL with LetsEncrypt/CertBot - Request Certificate
-sudo letsencrypt certonly --webroot -w ~/$newDomain/public -d $newDomain -d www.$newDomain
-sudo systemctl restart nginx
-
 # Setup Wordpress Database and Users
-cat << EOF >> "$HOME/wp.sql"
+cat << EOF > "$HOME/wp.sql"
 CREATE DATABASE $mysqlDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;
 CREATE USER $mysqlUser@localhost IDENTIFIED BY '$mysqlUserPass';
 GRANT ALL PRIVILEGES ON $mysqlDB.* TO '$mysqlUser'@'localhost';
@@ -153,7 +181,7 @@ sudo sed -i '$a define('\''DISABLE_WP_CRON'\'', true);' $HOME/$newDomain/public/
 # LetsEncrypt renewal - twice daily - skips certs not due in next 30days
 (crontab -l ; echo "0 0,12 * * * letsencrypt renew >/dev/null 2>&1")| crontab -
 
-cat << EOF >> "$HOME/$newDomain/scripts/backup.sh"
+cat << EOF > "$HOME/$newDomain/scripts/backup.sh"
 #!/bin/bash
 NOW=\$(date +%Y%m%d%H%M%S)
 SQL_FILE=\${NOW}_database.sql
