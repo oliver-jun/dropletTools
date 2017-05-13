@@ -28,6 +28,6 @@ My DigitalOcean referral: https://m.do.co/c/e2d5d9797108
 
 ```wget https://raw.githubusercontent.com/itcarsales/dropletTools/master/wpInstall.sh ; bash wpInstall.sh```
 
-The WordPress Dropper can be reused to install multiple instances of WordPress on a single server.  Some knowledge of DNS and NGINX configuration may be required for advanced configurations.  A single-core, 512Mb droplet has proven more than sufficient to run a single instance.
+The WordPress Dropper can be reused to install multiple instances of WordPress on a single server.  Some knowledge of DNS and NGINX configuration may be required for advanced installs.  A single-core, 512Mb droplet has proven more than sufficient to run a single instance.
 
 ![loader.io Test Report](https://github.com/itcarsales/dropletTools/raw/master/loadTest.jpg)
