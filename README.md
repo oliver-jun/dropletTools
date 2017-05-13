@@ -30,4 +30,4 @@ DigitalOcean: https://m.do.co/c/e2d5d9797108
 
 The WordPress Dropper can be reused to install multiple instances of WordPress on a single server.  Some knowledge of DNS and NGINX configuration may be required for advanced configurations.  A single-core, 512Mb droplet has proven more than sufficient to run a single instance.
 
-![alt text](https://raw.githubusercontent.com/itcarsales/dropletTools/load-test.jpg)
+![loader.io Test Report](https://github.com/itcarsales/dropletTools/raw/master/load-test.jpg)
