@@ -38,6 +38,7 @@ sudo newaliases
 echo "This is the root test message." | mail -s "Root Test" root
 echo "This is the standard email message" | mail -s "Email Test" $newEmail
 
+rm -f ~/mail.sh
 echo "------------------------------------------------------------"
 echo "----- Email Setup Complete"
 echo "------------------------------------------------------------"
