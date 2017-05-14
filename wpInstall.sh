@@ -108,7 +108,7 @@ server {
     }   
 
     # Don’t cache uris containing the following segments
-    if (\$request_uri ~* "/wp-admin/|/xmlrpc.php|wp-.*.php|/feed/|index.php|sitemap(_index)?.xml") {
+    if (\$request_uri ~* "/wp-admin/|/backdoor/|/xmlrpc.php|wp-.*.php|/feed/|index.php|sitemap(_index)?.xml") {
         set \$skip_cache 1;
     }   
 
@@ -178,7 +178,7 @@ sudo sed -i '$a define('\''DISABLE_WP_CRON'\'', true);' $HOME/$newDomain/public/
 # WordPress Cron on 5min Loop
 (crontab -l ; echo "*/5 * * * * cd $HOME/$newDomain/public; php -q wp-cron.php >/dev/null 2>&1")| crontab -
 # WordPress Daily Backups - 5am
-(crontab -l ; echo "0 5 * * 0 cd $HOME/$newDomain/public; $HOME/$newDomain/scripts/backup.sh")| crontab -
+(crontab -l ; echo "0 5 * * * cd $HOME/$newDomain/public; $HOME/$newDomain/scripts/backup.sh")| crontab -
 # LetsEncrypt renewal - twice daily - skips certs not due in next 30days
 (crontab -l ; echo "0 0,12 * * * letsencrypt renew >/dev/null 2>&1")| crontab -
 
