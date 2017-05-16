@@ -188,7 +188,7 @@ NOW=\$(date +%Y%m%d%H%M%S)
 SQL_FILE=\${NOW}_database.sql
 
 # Backup database
-/usr/local/bin/wp db export \$SQL_FILE --add-drop-table
+/usr/local/bin/wp db export \$SQL_FILE --add-drop-table >/dev/null 2>&1
 
 # Compress the database
 gzip \$SQL_FILE
