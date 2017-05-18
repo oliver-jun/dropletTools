@@ -38,3 +38,11 @@ The WordPress Dropper can be reused to install multiple instances of WordPress o
 ```ssh primaryUser@your.droplet.ip.address```
 
 ```wget https://raw.githubusercontent.com/itcarsales/dropletTools/master/mail.sh ; bash mail.sh```
+
+
+
+## Step 5) Final Changes
+
+### Using the following as an example: ( primaryUser: mainUsername | domain: example.com )
+
+Set the cache folder for the NGINX plugin:  /home/mainUsername/example.com/cache/
