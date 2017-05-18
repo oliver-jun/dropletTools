@@ -208,7 +208,12 @@ chmod u+x backup.sh
 # Install Redis-Object-Cache
 cd ~/$newDomain/public/wp-content
 wget https://raw.githubusercontent.com/ericmann/Redis-Object-Cache/master/object-cache.php
+
+# Install and Config NGINX-CACHE
+cachePath=~/$newDomain/cache
 wp plugin install nginx-cache --activate
+wp option update nginx_cache_path $cachePath
+wp option update nginx_auto_purge 1
 
 # Cleanup and move original files to .backups
 mv ~/*.old ~/.backups
