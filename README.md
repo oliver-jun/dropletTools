@@ -45,4 +45,4 @@ The WordPress Dropper can be reused to install multiple instances of WordPress o
 
 *Using the following as an example: ( primaryUser: username | domain: example.com )*
 
-Set the cache folder for the NGINX plugin:  /home/username/example.com/cache/
+Verify the cache folder for the NGINX plugin:  /home/username/example.com/cache/
