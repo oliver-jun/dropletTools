@@ -41,7 +41,7 @@ The WordPress Dropper can be reused to install multiple instances of WordPress o
 
 
 
-## Step 5) Final Changes
+## Step 5) Log into your new WordPress site and verify settings and plugins:
 
 *Using the following as an example: ( primaryUser: username | domain: example.com )*
 
