@@ -1,5 +1,5 @@
 # dropletTools
-Custom Droplet Scripts - Includes new droplet lockdown, LEMP setup, and WordPress Virtual Server Installer.
+Custom Droplet Scripts - Includes new droplet lockdown, LEMP setup, WordPress Virtual Server Installer, and Email setup.
 
 *All tools written for Digital Ocean Ubuntu 16.04LTS x64 droplets ($5/mo 512Mb works well)*
 
