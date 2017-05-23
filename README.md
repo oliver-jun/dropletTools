@@ -8,6 +8,7 @@ My DigitalOcean referral: https://m.do.co/c/e2d5d9797108
 ## Step 1) Secure a fresh droplet:
 
 ```ssh root@your.droplet.ip.address```
+
 ```wget https://raw.githubusercontent.com/itcarsales/dropletTools/master/newDroplet.sh ; bash newDroplet.sh```
 
 Features:
