@@ -15,7 +15,7 @@ Features:
 
 - Firewall Setup - UFW to allow SSH, HTTP, HTTPS
 - fail2ban Setup - 10min IP block after 5 failed ssh logon atempts
-- Setup for Unattended Updates, ReStarts, and AutoClean
+- Unattended Updates, ReStarts, and AutoClean
 - Disable SHH root access
 
 
@@ -26,6 +26,14 @@ Features:
 
 ```wget https://raw.githubusercontent.com/itcarsales/dropletTools/master/LEMP.sh ; bash LEMP.sh```
 
+Features:
+
+- NGINX
+- MariaDB
+- PHP 7.1
+- LetsEncrypt for free SSL Certificates
+- Fast CGI and Redis Caching
+- WP-CLI for WordPress management
 
 
 ## Step 3) Setup WordPress Dropper:
