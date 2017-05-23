@@ -7,10 +7,15 @@ My DigitalOcean referral: https://m.do.co/c/e2d5d9797108
 
 ## Step 1) Secure a fresh droplet:
 
-
 ```ssh root@your.droplet.ip.address```
-
 ```wget https://raw.githubusercontent.com/itcarsales/dropletTools/master/newDroplet.sh ; bash newDroplet.sh```
+
+Features:
+
+- Firewall Setup - UFW to allow SSH, HTTP, HTTPS
+- fail2ban Setup - 10min IP block after 5 failed ssh logon atempts
+- Setup for Unattended Updates, ReStarts, and AutoClean
+- Disable SHH root access
 
 
 
