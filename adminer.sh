@@ -32,7 +32,23 @@ fi
 mkdir ~/$newDomain/adminer
 cd ~/$newDomain/adminer
 wget "http://www.adminer.org/latest.php"
-ln -s ~/$newDomain/adminer/latest.php ~/$newDomain/adminer/index.php
+wget "https://raw.githubusercontent.com/vrana/adminer/master/designs/price/adminer.css"
+
+# Create main Adminer file to remove root access and include "latest.php" to simplify updates
+cat << EOF > "$HOME/$newDomain/adminer/index.php"
+<?php
+function adminer_object() {
+    class AdminerNoRoot extends Adminer {
+        function login(\$login, \$password) {
+            return (\$login != 'root');
+        } 
+    } 
+    return new AdminerNoRoot;
+}
+include "latest.php";
+EOF
+
+# Set Permissions
 chmod -R 755 ~/$newDomain/adminer
 
 # Setup Basic Block to establish LetsEncrypt, then replace with actual block
@@ -48,12 +64,20 @@ server {
         error_log $HOME/$newDomain/logs/adminer.error.log;
 
         location / {
-                index index.php;
-                try_files \$uri \$uri/ /index.php?\$args;
+            index index.php;        
+            try_files \$uri \$uri/ /index.php?\$args;        
         }
 
-        location ~ \.php$ {
-            try_files \$uri =404;
+        location ~ [^/]\\.php(/|$) {
+            fastcgi_split_path_info ^(.+?\\.php)(/.*)$;
+            if (!-f \$document_root\$fastcgi_script_name) {
+                return 404;
+            }
+            fastcgi_pass unix:/run/php/php7.1-fpm.sock;
+            fastcgi_param HTTP_PROXY "";
+            fastcgi_index index.php;
+            include fastcgi_params;
+            fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
         }
 }
 EOF
@@ -74,8 +98,7 @@ server {
 
         server_name dbadmin.$newDomain;
         root $HOME/$newDomain/adminer;
-        index index.php;
-
+        
         ssl_certificate /etc/letsencrypt/live/dbadmin.$newDomain/fullchain.pem;
         ssl_certificate_key /etc/letsencrypt/live/dbadmin.$newDomain/privkey.pem;
 
@@ -87,22 +110,22 @@ server {
         access_log $HOME/$newDomain/logs/adminer.access.log;
         error_log $HOME/$newDomain/logs/adminer.error.log;
 
-        location / {          
-                try_files \$uri \$uri/ /index.php?\$args;        
+        location / {
+            index index.php;        
+            try_files \$uri \$uri/ /index.php?\$args;        
         }
 
-    location ~ \.php$ {
-        try_files \$uri =404;
-        fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass unix:/run/php/php7.1-fpm.sock;
-        fastcgi_index index.php;
-        include fastcgi_params;
-        fastcgi_cache_bypass \$skip_cache;
-        fastcgi_no_cache \$skip_cache;
-        fastcgi_param SCRIPT_FILENAME $HOME/$newDomain/adminer\$fastcgi_script_name;
-        fastcgi_cache_valid 60m;
-    }
-
+        location ~ [^/]\\.php(/|$) {
+            fastcgi_split_path_info ^(.+?\\.php)(/.*)$;
+            if (!-f \$document_root\$fastcgi_script_name) {
+                return 404;
+            }
+            fastcgi_pass unix:/run/php/php7.1-fpm.sock;
+            fastcgi_param HTTP_PROXY "";
+            fastcgi_index index.php;
+            include fastcgi_params;
+            fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        }
 }
 
 server {
@@ -116,7 +139,6 @@ server {
 EOF
 sudo cp --no-preserve=mode,ownership ~/adminer.conf /etc/nginx/sites-available/adminer.conf
 sudo rm ~/adminer.conf
-sudo ln -s /etc/nginx/sites-available/adminer.conf /etc/nginx/sites-enabled/adminer.conf
 sudo systemctl restart nginx
 
 rm -f ~/adminer.sh
