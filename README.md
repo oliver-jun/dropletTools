@@ -54,9 +54,22 @@ The WordPress Dropper can be reused to install multiple instances of WordPress o
 ```wget https://raw.githubusercontent.com/itcarsales/dropletTools/master/mail.sh ; bash mail.sh```
 
 
+## Step 5) Setup Adminer for GUI database management:
 
-## Step 5) Log into your new WordPress site and verify settings and plugins:
+```ssh primaryUser@your.droplet.ip.address```
+
+```wget https://raw.githubusercontent.com/itcarsales/dropletTools/master/adminer.sh ; bash adminer.sh```
+
+
+## Step 6) Verify settings and plugins:
 
 *Using the following as an example: ( primaryUser: username | domain: example.com )*
 
-Verify the cache folder for the NGINX plugin:  /home/username/example.com/cache/
+Verify WordPress at https://example.com
+
+Verify WordPress Admin at https://example.com/wp-admin
+
+While logged into WordPress Admin, verify the cache folder for the NGINX plugin:  /home/username/example.com/cache/
+
+Verify Adminer at https://dbadmin.example.com
+
