@@ -220,7 +220,7 @@ mv ~/*.old ~/.backups
 
 echo "------------------------------------------------------------"
 echo "----- WordPress install Complete"
-echo "available at: http://$newDomain/wp-admin"
+echo "available at: https://$newDomain/wp-admin"
 echo "username: $USER"
 echo "password: $newDomainPass"
 echo "------------------------------------------------------------"
