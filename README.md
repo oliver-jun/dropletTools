@@ -61,15 +61,13 @@ The WordPress Dropper can be reused to install multiple instances of WordPress o
 ```wget https://raw.githubusercontent.com/itcarsales/dropletTools/master/adminer.sh ; bash adminer.sh```
 
 
-## Step 6) Verify settings and plugins:
+## Step 6) Verify Sites:
 
-*Using the following as an example: ( primaryUser: username | domain: example.com )*
+*Using the following as an example: ( domain: example.com )*
 
 Verify WordPress at https://example.com
 
 Verify WordPress Admin at https://example.com/wp-admin
-
-While logged into WordPress Admin, verify the cache folder for the NGINX plugin:  /home/username/example.com/cache/
 
 Verify Adminer at https://dbadmin.example.com
 
