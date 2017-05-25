@@ -24,7 +24,7 @@ installNow=false
 while [ $installNow == false ]
 do
     echo && read -p "Please enter your new domain name (example.com):" newDomain && echo
-    mysqlUser=$(echo $newDomain | sed 's/\..*$//')
+    mysqlUser=$(echo $newDomain | sed 's/\..*$//' | sed 's/\-//g')
     mysqlDB=$mysqlUser"db"
     echo && read -p "Please enter a password for your new WordPress account:" newDomainPass && echo
     echo && read -p "Please enter a password for the new MySQL user:" mysqlUserPass && echo
