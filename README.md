@@ -71,3 +71,11 @@ Verify WordPress Admin at https://example.com/wp-admin
 
 Verify Adminer at https://dbadmin.example.com
 
+## WordServer
+
+WordServer is a work-in-progress.  It is meant to be run on a clean install of Ubuntu Server 16.04 x64.  It provides a mirrored environment to dropletTools for local developers without a droplet.
+
+```ssh primaryUser@your.virtualbox.ip.address```
+
+```wget https://raw.githubusercontent.com/itcarsales/dropletTools/master/wordserver.sh ; bash wordserver.sh```
+
