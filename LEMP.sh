@@ -15,7 +15,7 @@ echo "-------------------     by itcarsales     ------------------"
 echo "------------------------------------------------------------"
 
 # Install Repo Management
-sudo apt-get install software-properties-common
+sudo apt-get -y install software-properties-common
 
 # MariaDB Repo
 sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
@@ -58,7 +58,7 @@ sudo rm /etc/nginx/sites-enabled/default
 sudo cp --no-preserve=mode,ownership /etc/nginx/nginx.conf ~/nginx.conf.old
 sudo rm /etc/nginx/nginx.conf
 
-sudo cat << EOF >> "$HOME/nginx.conf"
+sudo cat << EOF > "$HOME/nginx.conf"
 user $USER;
 worker_processes 1;
 pid /run/nginx.pid;

@@ -84,13 +84,13 @@ EOF
 echo "-----------------------------------------------------------------"
 echo "----- Modify /etc/ssh/sshd_config to remove SHH root access"
 echo "-----------------------------------------------------------------"
-sed -i '/^PermitRootLogin[ \t]\+\w\+$/{ s//PermitRootLogin no/g; }' /etc/ssh/sshd_config
+sed -i '/PermitRootLogin /c\PermitRootLogin no' /etc/ssh/sshd_config
 
 publicIP="`wget -qO- http://ipecho.net/plain`"
 echo "-----------------------------------------------------------------"
 echo "----- Rebooting Now - Please Reconnect with Primary User Account"
 echo "----- > ssh $installUser@$publicIP"
-echo "-----------------------------------------------------------s------"
+echo "-----------------------------------------------------------------"
 
 # Reboot to force new user access and initialize
 reboot now
