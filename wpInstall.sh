@@ -173,6 +173,7 @@ echo "----- Setting up System Daemon Cron with Daily Backup"
 echo "-----------------------------------------------------------------"
 
 # Disable WordPress cron and enable System User Cron on 5min job
+sudo sed -i '$a /** Custom Settings by itcarsales */' $HOME/$newDomain/public/wp-config.php
 sudo sed -i '$a define('\''DISABLE_WP_CRON'\'', true);' $HOME/$newDomain/public/wp-config.php
 
 # WordPress Cron on 5min Loop
@@ -208,6 +209,10 @@ chmod u+x backup.sh
 # Install Redis-Object-Cache
 cd ~/$newDomain/public/wp-content
 wget https://raw.githubusercontent.com/ericmann/Redis-Object-Cache/master/object-cache.php
+
+# Edit wp-config to add cache values for operation and prevent redirects on multisite
+sudo sed -i '$a define('\''WP_CACHE'\'', true);' $HOME/$newDomain/public/wp-config.php
+sudo sed -i '$a define('\''WP_CACHE_KEY_SALT'\'', '\'''$newDomain''\'');' $HOME/$newDomain/public/wp-config.php
 
 # Install and Config NGINX-CACHE
 cachePath=~/$newDomain/cache
