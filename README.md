@@ -63,7 +63,7 @@ The WordPress Dropper can be reused to install multiple instances of WordPress o
 
 ## Step 6) Verify Sites:
 
-*Using the following as an example: ( domain: example.com )*
+*Using the following as an example: ( domain: example.com ) Be sure to create and point the "A" Records for both example.com and dbadmin.example.com to your droplet IP address.*
 
 Verify WordPress at https://example.com
 
