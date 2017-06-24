@@ -8,11 +8,40 @@ if [ "$(id -u)" == "0" ]; then
 	exit 1
 fi
 
+echo && read -p "Would you like to setup LEMP Server? (y/n)" -n 1 -r -s installLEMP && echo
+if [[ $installLEMP != "Y" && $installLEMP != "y" ]]; then
+	echo "LEMP Server install cancelled."  
+	exit 1
+fi
+
 echo "------------------------------------------------------------"
 echo "    Welcome to WordPress LEMP Setup - Ubuntu 16.04LTS x64"
 echo "          NGINX - MariaDB - PHP 7.1 - WordPress CLI"
 echo "-------------------     by itcarsales     ------------------"
 echo "------------------------------------------------------------"
+
+installNow=false
+while [ $installNow == false ]
+do
+
+    echo && read -p "Please enter a MySQL root password:" mysqlRootPass && echo
+
+    echo "---------- MySQL Info -------------"
+    echo "MySQL root password: $mysqlRootPass"
+    echo "----------------------------------------"
+
+    echo && read -p "Are these settings correct? (y/n)" -n 1 -r -s installCorrect && echo
+    if [[ $installCorrect == "Y" || $installCorrect == "y" ]]; then
+        installNow=true
+        echo
+        echo "---------------- PLEASE SAVE THESE SETTINGS ----------------"
+        echo "-------  They will be needed during WordPress Setup  -------"
+        read -p "------------   Press enter to continue   ----------------"
+    else
+        installNow=false
+    fi
+done
+
 
 # Install Repo Management
 sudo apt-get -y install software-properties-common
@@ -46,11 +75,25 @@ sudo systemctl stop mysqld
 sudo rm -rf /etc/mysql /var/lib/mysql
 
 # Setup mariaDB
-sudo apt-get install mariadb-server -y
+export DEBIAN_FRONTEND="noninteractive"
+sudo debconf-set-selections <<< "mariadb-server mysql-server/root_password password $mysqlRootPass"
+sudo debconf-set-selections <<< "mariadb-server mysql-server/root_password_again password $mysqlRootPass"
+sudo apt-get install -y mariadb-server
 sudo systemctl stop mysqld
 sudo mysql_install_db
 sudo systemctl start mysql
-sudo mysql_secure_installation
+
+# Because SQL will not accept piped shell commands, I apply Bash-Jutsu to secure it manually.
+cat << EOF > "$HOME/secure.sql"
+UPDATE mysql.user SET Password=PASSWORD('$mysqlRootPass') WHERE User='root';
+DELETE FROM mysql.user WHERE User='';
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+DROP DATABASE IF EXISTS test;
+DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
+FLUSH PRIVILEGES;
+EOF
+mysql -u "root" "-p$mysqlRootPass" < ~/secure.sql
+rm ~/secure.sql
 
 # Setup NGINX Config 
 sudo rm /etc/nginx/sites-available/default
