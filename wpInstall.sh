@@ -214,6 +214,9 @@ wget https://raw.githubusercontent.com/ericmann/Redis-Object-Cache/master/object
 sudo sed -i '$a define('\''WP_CACHE'\'', true);' $HOME/$newDomain/public/wp-config.php
 sudo sed -i '$a define('\''WP_CACHE_KEY_SALT'\'', '\'''$newDomain''\'');' $HOME/$newDomain/public/wp-config.php
 
+# Edit wp-config to add direct access to store leads
+sudo sed -i '$a define('\''FS_METHOD'\'', '\''direct'\'');' $HOME/$newDomain/public/wp-config.php
+
 # Install and Config NGINX-CACHE
 cachePath=~/$newDomain/cache
 wp plugin install nginx-cache --activate
