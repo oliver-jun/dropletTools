@@ -12,10 +12,6 @@ echo "         Welcome to Adminer Setup - Ubuntu 16.04LTS x64"
 echo "-------------------     by itcarsales     ------------------"
 echo "------------------------------------------------------------"
 
-# Update new repos
-sudo apt-get -y update
-sudo apt-get -y upgrade
-
 # See if cont. from previous install step
 if [ $newDomain ]; then
     echo && read -p "Are you installing to $newDomain? (y/n)" -n 1 -r -s installCorrect && echo
@@ -27,6 +23,10 @@ if [ $newDomain ]; then
 else
     echo && read -p "Please enter your domain name (example.com):" newDomain && echo
 fi
+
+# Update new repos
+sudo apt-get -y update
+sudo apt-get -y upgrade
 
 # Create adminer directory, download file, and set permissions.  Overwrite latest.php to update, index.php is a symLink
 mkdir ~/$newDomain/adminer
