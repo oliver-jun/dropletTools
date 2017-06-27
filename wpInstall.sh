@@ -137,6 +137,11 @@ server {
         fastcgi_cache $newDomain;
         fastcgi_cache_valid 60m;
     }
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+        expires 2d;
+        add_header Cache-Control "public, no-transform";
+    }
 }
 
 server {

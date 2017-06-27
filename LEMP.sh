@@ -155,7 +155,7 @@ http {
 	gzip on;
 	gzip_disable "msie6";
 
-	# gzip_vary on;
+	gzip_vary on;
 	gzip_proxied any;
 	gzip_comp_level 2;
 	# gzip_buffers 16 8k;
