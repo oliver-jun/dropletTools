@@ -3,7 +3,11 @@ Custom Droplet Scripts - Includes new droplet lockdown, LEMP setup, WordPress Vi
 
 *All tools written for Digital Ocean Ubuntu 16.04LTS x64 droplets ($5/mo 512Mb works well)*
 
-My DigitalOcean referral: https://m.do.co/c/e2d5d9797108
+Support me through my DigitalOcean referral: https://m.do.co/c/e2d5d9797108
+
+
+
+*( Using the following as an example: domain = example.com ) Be sure you create and point the "A" Records for example.com mail.example.com and dbadmin.example.com to your droplet IP address prior to starting step 3.*
 
 ## Step 1) Secure a fresh droplet:
 
@@ -62,8 +66,6 @@ The WordPress Dropper can be reused to install multiple instances of WordPress o
 
 
 ## Step 6) Verify Sites:
-
-*Using the following as an example: ( domain: example.com ) Be sure to create and point the "A" Records for both example.com and dbadmin.example.com to your droplet IP address.*
 
 Verify WordPress at https://example.com
 
