@@ -3,7 +3,7 @@ Custom Droplet Scripts - Includes new droplet lockdown, LEMP setup, WordPress Vi
 
 *All tools written for Digital Ocean Ubuntu 16.04LTS x64 droplets ($5/mo 512Mb works well)*
 
-Support me through my DigitalOcean referral: https://m.do.co/c/e2d5d9797108
+If you find these scripts useful, feel free to support me through my DigitalOcean referral: https://m.do.co/c/e2d5d9797108
 
 
 
