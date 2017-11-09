@@ -171,7 +171,7 @@ rm ~/wp.sql
 cd ~/$newDomain/public
 wp core download
 wp core config --dbname=$mysqlDB --dbuser=$mysqlUser --dbpass=$mysqlUserPass
-wp core install --url=http://$newDomain --title='New WordPress Site' --admin_user=$USER --admin_email=admin@$newDomain --admin_password=$newDomainPass
+wp core install --url=https://$newDomain --title='New WordPress Site' --admin_user=$USER --admin_email=admin@$newDomain --admin_password=$newDomainPass
 
 echo "-----------------------------------------------------------------"
 echo "----- Setting up System Daemon Cron with Daily Backup"
@@ -185,9 +185,22 @@ sudo sed -i '$a define('\''DISABLE_WP_CRON'\'', true);' $HOME/$newDomain/public/
 (crontab -l ; echo "*/5 * * * * cd $HOME/$newDomain/public; php -q wp-cron.php >/dev/null 2>&1")| crontab -
 # WordPress Daily Backups - 5am
 (crontab -l ; echo "0 5 * * * cd $HOME/$newDomain/public; $HOME/$newDomain/scripts/backup.sh")| crontab -
-# LetsEncrypt renewal - twice daily - skips certs not due in next 30days
-(crontab -l ; echo "0 0,12 * * * letsencrypt renew >/dev/null 2>&1")| crontab -
 
+# LetsEncrypt renewal - twice daily - skips certs not due in next 30days
+# (crontab -l ; echo "0 0,12 * * * letsencrypt renew >/dev/null 2>&1")| crontab -
+cat << EOF > "$HOME/SSLrenew.sh"
+#!/bin/bash
+letsencrypt renew
+systemctl restart nginx
+EOF
+sudo mv $HOME/SSLrenew.sh /root/SSLrenew.sh
+
+cat << EOF > "$HOME/SSLrenew"
+0 0,12 * * * root /root/SSLrenew.sh
+EOF
+sudo mv $HOME/SSLrenew /etc/cron.d/SSLrenew
+
+# --Create backup script--
 cat << EOF > "$HOME/$newDomain/scripts/backup.sh"
 #!/bin/bash
 NOW=\$(date +%Y%m%d%H%M%S)
