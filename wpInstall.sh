@@ -191,7 +191,7 @@ sudo sed -i '$a define('\''DISABLE_WP_CRON'\'', true);' $HOME/$newDomain/public/
 cat << EOF > "$HOME/SSLrenew.sh"
 #!/bin/bash
 letsencrypt renew
-systemctl restart nginx
+service nginx reload
 EOF
 sudo mv $HOME/SSLrenew.sh /root/SSLrenew.sh
 
