@@ -193,8 +193,8 @@ echo "0 0 * * * /root/SSLrenew.sh >> /var/log/SSLrenew.log" | sudo crontab -
 cat << EOF > "$HOME/SSLrenew.sh"
 #!/bin/bash
 date +%d-%m-%y/%H:%M:%S
-letsencrypt renew 
-service nginx reload
+letsencrypt renew
+/usr/sbin/service nginx reload
 echo "----------------------------------------"
 EOF
 
