@@ -186,21 +186,23 @@ sudo sed -i '$a define('\''DISABLE_WP_CRON'\'', true);' $HOME/$newDomain/public/
 # WordPress Daily Backups - 5am
 (crontab -l ; echo "0 5 * * * cd $HOME/$newDomain/public; $HOME/$newDomain/scripts/backup.sh")| crontab -
 
-# LetsEncrypt renewal - twice daily - skips certs not due in next 30days
-# (crontab -l ; echo "0 0,12 * * * letsencrypt renew >/dev/null 2>&1")| crontab -
+# LetsEncrypt renewal - 12am daily - skips certs not due in next 30days 
+echo "0 0 * * * /root/SSLrenew.sh >> /var/log/SSLrenew.log" | sudo crontab -
+
+# Create renewal script - logs to /var/log/SSLrenew.log
 cat << EOF > "$HOME/SSLrenew.sh"
 #!/bin/bash
-letsencrypt renew
+date +%d-%m-%y/%H:%M:%S
+letsencrypt renew 
 service nginx reload
+echo "----------------------------------------"
 EOF
+
 sudo mv $HOME/SSLrenew.sh /root/SSLrenew.sh
+sudo chown -R root /root/SSLrenew.sh
+sudo chmod +x /root/SSLrenew.sh
 
-cat << EOF > "$HOME/SSLrenew"
-0 0,12 * * * root /root/SSLrenew.sh
-EOF
-sudo mv $HOME/SSLrenew /etc/cron.d/SSLrenew
-
-# --Create backup script--
+# Create backup script
 cat << EOF > "$HOME/$newDomain/scripts/backup.sh"
 #!/bin/bash
 NOW=\$(date +%Y%m%d%H%M%S)
