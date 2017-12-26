@@ -84,7 +84,7 @@ EOF
 echo "-----------------------------------------------------------------"
 echo "----- Modify /etc/ssh/sshd_config to remove SHH root access"
 echo "-----------------------------------------------------------------"
-sed -i '/PermitRootLogin /c\PermitRootLogin no' /etc/ssh/sshd_config
+sed -i '/PermitRootLogin /c\PermitRootLogin yes' /etc/ssh/sshd_config
 
 publicIP="`wget -qO- http://ipecho.net/plain`"
 echo "-----------------------------------------------------------------"
